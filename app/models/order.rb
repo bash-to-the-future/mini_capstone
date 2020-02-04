@@ -1,9 +1,10 @@
 class Order < ApplicationRecord
-  belongs_to :product
   belongs_to :user
+  has_many :carted_products
+  has_many :products, through: :carted_products
 
   def calculate_subtotal
-    self.subtotal = product.price * quantity
+    self.subtotal = carted_products.sum { |carted_product| carted_product.subtotal }
   end
 
   def calculate_tax
@@ -15,6 +16,8 @@ class Order < ApplicationRecord
   end
 
   def calculate_totals
+    save
+    user.cart.update(status: "purchased", order_id: id)
     calculate_subtotal
     calculate_tax
     calculate_total

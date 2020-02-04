@@ -7,12 +7,7 @@ class Api::OrdersController < ApplicationController
   end
 
   def create
-    @order = Order.new(
-                        user_id: current_user.id,
-                        product_id: params[:product_id],
-                        quantity: params[:quantity]
-                      )
-
+    @order = Order.new(user_id: current_user.id)
     @order.calculate_totals
     @order.save
     render 'show.json.jb'
